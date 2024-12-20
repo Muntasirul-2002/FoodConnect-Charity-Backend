@@ -1,9 +1,8 @@
-
 import { comparePassword, hashPassword } from "../helper/authHelper.js";
 import HostelModel from "../models/HostelModel.js";
 import ngoModel from "../models/ngoModel.js";
 import resModel from "../models/resModel.js";
-import JWT from 'jsonwebtoken'
+import JWT from "jsonwebtoken";
 import slugify from "slugify";
 // ngo signup  controller
 export const ngoSignupController = async (req, res) => {
@@ -55,17 +54,31 @@ export const ngoSignupController = async (req, res) => {
 // restaurant signup  controller
 export const restaurantSignupController = async (req, res) => {
   try {
-    const { resName, email, password, name, address, landmark, phone, role } = req.body;
-    
+    const { resName, email, password, name, address, landmark, phone, role } =
+      req.body;
+
     // Check for required fields
-    if (!resName || !email || !password || !name || !address || !landmark || !phone || !role) {
-      return res.status(400).send({ success: false, message: "All fields are required" });
+    if (
+      !resName ||
+      !email ||
+      !password ||
+      !name ||
+      !address ||
+      !landmark ||
+      !phone ||
+      !role
+    ) {
+      return res
+        .status(400)
+        .send({ success: false, message: "All fields are required" });
     }
 
     // Check for existing restaurant registered
     const existingEmail = await resModel.findOne({ email: email });
     if (existingEmail) {
-      return res.status(400).send({ success: false, message: "Email is already exists" });
+      return res
+        .status(400)
+        .send({ success: false, message: "Email is already exists" });
     }
 
     const hashedPassword = await hashPassword(password);
@@ -77,61 +90,92 @@ export const restaurantSignupController = async (req, res) => {
       address,
       landmark,
       phone,
-      role
+      role,
     }).save();
 
-    res.status(200).send({ success: true, message: "Restaurant Added Successfully !!", resUser });
+    res.status(200).send({
+      success: true,
+      message: "Restaurant Added Successfully !!",
+      resUser,
+    });
   } catch (error) {
-    return res.status(400).send({ success: false, message: "Something went wrong: ", error });
+    return res
+      .status(400)
+      .send({ success: false, message: "Something went wrong: ", error });
   }
 };
 
-
 // hostel signup controller
-export const hostelSignupController = async (req,res)=>{
+export const hostelSignupController = async (req, res) => {
   try {
-    const {hosName, email, password, name, address, landmark, phone, role} = req.body;
-    const slug = slugify(hosName, {lower: true});
-    if(!hosName || !email || !password || !name || !address || !landmark || !phone || !role){
-      return res.status(404).send({success: false, message:"All fields are required"})
+    const { hosName, email, password, name, address, landmark, phone, role } =
+      req.body;
+    const slug = slugify(hosName, { lower: true });
+    if (
+      !hosName ||
+      !email ||
+      !password ||
+      !name ||
+      !address ||
+      !landmark ||
+      !phone ||
+      !role
+    ) {
+      return res
+        .status(404)
+        .send({ success: false, message: "All fields are required" });
     }
 
-    const existingEmail = await HostelModel.findOne({email: email})
-    if(existingEmail){
-      return res.status(400).send({success: false, message:"Duplicate email"})
+    const existingEmail = await HostelModel.findOne({ email: email });
+    if (existingEmail) {
+      return res
+        .status(400)
+        .send({ success: false, message: "Duplicate email" });
     }
-    const hashedPassword = await hashPassword(password)
+    const hashedPassword = await hashPassword(password);
 
     const hosUser = new HostelModel({
       hosName,
-      email, password: hashedPassword, name, address, landmark, phone, role, slug,
-    }).save()
-    res.status(200).send({success:true, message:"Hostel Signup Successfully", hosUser})
+      email,
+      password: hashedPassword,
+      name,
+      address,
+      landmark,
+      phone,
+      role,
+      slug,
+    }).save();
+    res
+      .status(200)
+      .send({ success: true, message: "Hostel Signup Successfully", hosUser });
   } catch (error) {
-    return res.status(400).send({success:false, message:"Something went wrong:", error})
-   
+    return res
+      .status(400)
+      .send({ success: false, message: "Something went wrong:", error });
   }
-}
+};
 
 //login function
-export const loginController = async (req,res) =>{
+export const loginController = async (req, res) => {
   try {
-    const {email, password, role} = req.body;
-    if(!email || !password || !role){
-      return res.status(400).send({success: false, message: "All fields are required"})
+    const { email, password, role } = req.body;
+    if (!email || !password || !role) {
+      return res
+        .status(400)
+        .send({ success: false, message: "All fields are required" });
     }
     let user;
     switch (role) {
       case "hostel":
-        user = await HostelModel.findOne({email})
+        user = await HostelModel.findOne({ email }).select("+password");
         break;
       case "restaurant":
-        user = await resModel.findOne({email})
+        user = await resModel.findOne({ email }).select("+password");
         break;
-      case "ngo" :
-        user = await ngoModel.findOne({email})
+      case "ngo":
+        user = await ngoModel.findOne({ email }).select("+password");
         break;
-    
+
       default:
         return res.status(400).send({ message: "Invalid role" });
     }
@@ -139,26 +183,27 @@ export const loginController = async (req,res) =>{
     if (!user) {
       return res.status(404).send({ message: "User not found" });
     }
-
-    const isMatch = await comparePassword(password, user.password)
-    if(!isMatch){
+    //verify password
+    const isMatch = await comparePassword(password, user.password);
+    if (!isMatch) {
       return res.status(400).send({ message: "Invalid password" });
     }
-
-    //Token 
-    const token = await JWT.sign({_id: user._id}, process.env.JWT_SECRET,{
-      expiresIn: "7d"
-    })
+    // remove password from user object before sending response
+    user.password = undefined;
+    // Generate JWT token
+    const token = JWT.sign(
+      { _id: user._id, role: user.role },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "7d",
+      }
+    );
     res.status(200).send({
       success: true,
       message: "Login Successful",
-      user:{
-        email:email,
-        role:role,
-        userID: user._id
-      },
-      token
-    })
+      user,
+      token,
+    });
   } catch (error) {
     console.log(error);
     res.status(500).send({
@@ -167,44 +212,40 @@ export const loginController = async (req,res) =>{
       error,
     });
   }
-}
+};
 
 //view-all-hostel-users
-export const ViewAllHostelUsersController = async(req,res) => {
+export const ViewAllHostelUsersController = async (req, res) => {
   try {
-    const viewAllHostelUsers = await HostelModel.find()
+    const viewAllHostelUsers = await HostelModel.find().select("-password")
     res.status(200).send({
       success: true,
       message: "All Hostel Users",
-      viewAllHostelUsers
-  })
+      viewAllHostelUsers,
+    });
   } catch (error) {
-    console.log(error)
-      res.status(404).send({
-        success: false,
-        message: "Something went wrong in getting food list"
-      })  
-
-    }
-    
-  
-
-}
+    console.log(error);
+    res.status(404).send({
+      success: false,
+      message: "Something went wrong in getting food list",
+    });
+  }
+};
 
 //get-all-hostels
-export const GetAllHostelController = async (req,res)=> {
+export const GetAllRestaurantsController = async (req, res) => {
   try {
-    const getAllHostel = await HostelModel.find({},'hosName')
+    const getAllRestaurant = await resModel.find().select("-password")
     res.status(200).send({
       success: true,
-      message: "All Hostels found",
-      getAllHostel
-    })
+      message: "All Restaurant fetched successfully",
+      getAllRestaurant,
+    });
   } catch (error) {
-console.log(error)
-res.status(404).send({
-  success: false,
-  message: "Something went wrong in getting all Hostels"
-})    
+    console.log(error);
+    res.status(404).send({
+      success: false,
+      message: "Something went wrong in getting all restaurants",
+    });
   }
-}
+};

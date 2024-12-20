@@ -3,7 +3,7 @@ import slugify from "slugify";
 export const addFoodController = async (req, res) => {
   try {
     const {
-      name,
+      foodName:name,
       description,
       quantity,
       restaurant,
@@ -12,7 +12,7 @@ export const addFoodController = async (req, res) => {
       category,
       contact
     } = req.body;
-    const images = req.files.map((file) => file.filename);
+    const images = req.files.map((file) => file.filename) || [];
     const slug = slugify(name, { lower: true });
 
     const newFood = new foodModel({
