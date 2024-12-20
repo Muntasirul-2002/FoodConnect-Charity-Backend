@@ -33,8 +33,9 @@ const ngoSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    default: "owner",
+    default: "ngo",
   },
-});
+  cart:[{}]
+}, {timestamps: true});
 
 export default mongoose.model("NGO_users", ngoSchema);

@@ -1,8 +1,9 @@
 import mongoose from "mongoose";
-const restaurantSchema = new mongoose.Schema({
-    resName:{
-        type:String,
-        required:true
+
+const hostelSchema = new mongoose.Schema({
+    hosName:{
+        type: String,
+        required: true,
     },
     email:{
         type:String,
@@ -30,8 +31,8 @@ const restaurantSchema = new mongoose.Schema({
     },
     role:{
         type:String,
-        default:"restaurant"
+        default:"owner"
     }
 })
 
-export default mongoose.model("restaurant_user", restaurantSchema)
+export default mongoose.model("hostel_users", hostelSchema)

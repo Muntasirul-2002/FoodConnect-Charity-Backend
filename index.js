@@ -1,14 +1,47 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 import { connectDB } from "./config/db.js";
 import authRouter from "./router/authRoute.js";
+import foodRouter from "./router/foodRoute.js";
 
 dotenv.config();
 const app = express();
 const port = 8080;
-app.use(express.json());
 
+//cors setup
+const allowedOrigin = [
+  "http://localhost:8080",
+  "http://localhost:3000",
+  undefined
+]
+
+const corsOptions = {
+  origin:( origin, callback) => {
+    if(allowedOrigin.includes(origin)){
+      callback(null,true)
+    }else{
+      callback(new Error(`Not allowed by cors origin: ${origin}`))
+    }
+  },
+  credentials: true
+}
+
+// Get the directory name in ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Ensure the uploads directory exists
+const uploadsDir = path.join(__dirname, "routes", "uploads");
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
+//setup middleware
+app.use(cors(corsOptions))
+app.use(express.json());
 
 //default router
 app.get("/", (req, res) => {
@@ -17,6 +50,8 @@ app.get("/", (req, res) => {
 
 //api routes
 app.use('/api/v1/auth', authRouter)
+app.use('/api/v1/food', foodRouter)
+app.use("/image", express.static(path.join(__dirname, "uploads")));
 
 connectDB().then(() => {
   app.listen(port, () => {
