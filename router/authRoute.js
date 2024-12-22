@@ -1,6 +1,6 @@
 import express from 'express'
 import { GetAllRestaurantsController, hostelSignupController, loginController, ngoSignupController, restaurantSignupController, ViewAllHostelUsersController } from '../controller/authController.js'
-import { isHostel, isNgo, requireSignIn } from '../middleware/authMiddleware.js'
+import { isHostel, isNgo, isRestaurant, requireSignIn } from '../middleware/authMiddleware.js'
 const authRouter = express.Router()
 
 //ngo signup
@@ -16,5 +16,9 @@ authRouter.get('/hostel-auth', requireSignIn, isHostel, (req,res)=>{
 authRouter.get('/ngo-auth', requireSignIn, isNgo, (req,res)=>{
     res.status(200).send({ok:true})
 })
+
+authRouter.get("/res-auth", requireSignIn, isRestaurant, (req,res)=> {
+    res.status(200).send({ok:true})
+} )
 
 export default authRouter

@@ -1,6 +1,7 @@
 import JWT from "jsonwebtoken";
 import HostelModel from "../models/HostelModel.js";
 import ngoModel from "../models/ngoModel.js";
+import resModel from "../models/resModel.js";
 
 //Protected routes token base
 export const requireSignIn = async (req, res, next) => {
@@ -63,6 +64,28 @@ export const isNgo = async (req,res,next)=>{
       success: false,
       error,
       message:"Error in NGO middleware"
+    })
+  }
+}
+
+// restaurant access 
+export const isRestaurant = async(req,res,next)=> {
+  try {
+    const user = await resModel.findById(req.user._id)
+    if(user.role === !"restaurant"){
+      return res.status(401).send({
+        success : false,
+        message : "UnAuthorized ! You're not allowed to access restaurant dashboard"
+      })
+    }else{
+      next()
+    }
+  } catch (error) {
+    console.log("Error in accessing restaurant dashboard", error)
+    res.status(401).send({
+      success: false,
+      error,
+      message:"Error in Restaurant middleware"
     })
   }
 }
