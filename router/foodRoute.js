@@ -1,5 +1,5 @@
 import express from 'express'
-import { addFoodController, allFoodListController, deleteAllFoodController, singleFoodController } from '../controller/foodController.js'
+import { addCartItemController, addFoodController, allFoodListController, deleteAllFoodController, getCartItemController, removeCartItemController, singleFoodController } from '../controller/foodController.js'
 import multer from 'multer'
 import path from 'path'
 import fs from 'fs'
@@ -32,5 +32,8 @@ foodRouter.post('/add-food', upload.array("images", 3), addFoodController)
 foodRouter.get('/food-list', allFoodListController)
 foodRouter.get('/single-food/:slug', singleFoodController)
 foodRouter.delete('/delete-food/:pid', deleteAllFoodController)
+foodRouter.post("/cart/add-item", addCartItemController)
+foodRouter.get("/cart/get-food", getCartItemController)
+foodRouter.post("/cart/remove-item", removeCartItemController)
 
 export default foodRouter;
