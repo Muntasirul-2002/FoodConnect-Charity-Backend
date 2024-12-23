@@ -3,38 +3,96 @@ import slugify from "slugify";
 import ngoModel from "../models/ngoModel.js";
 import mongoose from "mongoose";
 
+// export const addFoodController = async (req, res) => {
+//   try {
+//     const {
+//       foodName: name,
+//       description,
+//       quantity,
+//       restaurant,
+//       location,
+//       landmark,
+//       category,
+//       contact,
+//     } = req.body;
+//     const images = req.files.map((file) => file.filename) || [];
+//     const slug = slugify(name, { lower: true });
+
+//     const newFood = new foodModel({
+//       name,
+//       description,
+//       quantity,
+//       restaurant,
+//       location,
+//       landmark,
+//       category,
+//       images,
+//       slug,
+//       contact,
+//     });
+
+//     await newFood.save();
+//     res.status(201).json({
+//       success: true,
+//       message: "Food Added successfully",
+//     });
+//   } catch (error) {
+//     console.log(error);
+//     res.status(500).json({
+//       success: false,
+//       message: "Error while adding food",
+//       error: error.message,
+//     });
+//   }
+// };
 export const addFoodController = async (req, res) => {
   try {
     const {
       foodName: name,
       description,
       quantity,
-      restaurant,
       location,
       landmark,
       category,
       contact,
+      userRole, // Add userRole to req.body (passed from frontend)
     } = req.body;
+
     const images = req.files.map((file) => file.filename) || [];
     const slug = slugify(name, { lower: true });
 
-    const newFood = new foodModel({
+    // Initialize the data object
+    const foodData = {
       name,
       description,
       quantity,
-      restaurant,
       location,
       landmark,
       category,
       images,
       slug,
       contact,
-    });
+    };
 
+    // Conditionally add restaurant or hosName based on user role
+    if (userRole === "restaurant") {
+      foodData.restaurant = req.body.restaurant; // Add restaurant field
+    } else if (userRole === "hostel") {
+      foodData.hosName = req.body.hosName; // Add hosName field
+    } else {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid user role",
+      });
+    }
+
+    // Save the food item in the database
+    const newFood = new foodModel(foodData);
     await newFood.save();
+
     res.status(201).json({
       success: true,
-      message: "Food Added successfully",
+      message: "Food added successfully",
     });
   } catch (error) {
     console.log(error);

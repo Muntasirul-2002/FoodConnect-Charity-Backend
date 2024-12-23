@@ -5,6 +5,7 @@ const foodSchema = new mongoose.Schema({
     slug: String,
     description: String,
     quantity: Number,
+    hosName : String,
     restaurant: String,
     location: String,
     landmark: String,
