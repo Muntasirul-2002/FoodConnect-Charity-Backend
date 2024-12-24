@@ -1,7 +1,7 @@
 import foodModel from "../models/foodModel.js";
 import slugify from "slugify";
 import ngoModel from "../models/ngoModel.js";
-import mongoose from "mongoose";
+
 
 // export const addFoodController = async (req, res) => {
 //   try {
@@ -55,7 +55,7 @@ export const addFoodController = async (req, res) => {
       landmark,
       category,
       contact,
-      userRole, // Add userRole to req.body (passed from frontend)
+      userRole, 
     } = req.body;
 
     const images = req.files.map((file) => file.filename) || [];
@@ -181,13 +181,12 @@ export const addCartItemController = async (req, res) => {
     if (!user.cart) {
       user.cart = [];
     }
-
     user.cart.push(food);
 
     const updateUser = await user.save();
     console.log(updateUser);
 
-    res.status(200).json({ cart: updateUser.cart });
+    res.status(200).json({success: true, cart: updateUser.cart });
   } catch (error) {
     console.log("Error in adding food in cart :", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
