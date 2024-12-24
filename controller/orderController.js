@@ -1,5 +1,5 @@
 import orderModel from "../models/orderModel.js";
-
+// import {sendSms} from '../utils/smsService.js'
 export const createOrderController = async (req, res) => {
   try {
     const { foodItem, food_name, address, buyer } = req.body;
@@ -21,6 +21,15 @@ export const createOrderController = async (req, res) => {
       message: "Order has been created",
       order: newOrder,
     });
+    // const message = `Thank you for your order, ${address.name} ! Here are your order details:
+    
+    // Food Item : ${food_name.join(',')}
+    // Total Item : ${food_name.length}
+    // Delivery Address : ${address.location}
+    // Map : ${address.mapLink}
+    // We will contact you shortly
+    // `
+    // await sendSms(address.contact, message)
   } catch (error) {
     console.log("Error in creating order : ", error);
     res.status(500).json({
@@ -46,7 +55,7 @@ export const getAllOrdersController = async (req, res) => {
 
 export const getSingleOrderController = async (req, res) => {
   try {
-    const order = await orderModel.findById(req.params.id);
+    const order = await orderModel.findById(req.params.id)
     if (!order) {
       res.status(404).json({
         success: false,
@@ -64,6 +73,26 @@ export const getSingleOrderController = async (req, res) => {
   }
 };
 
+export const getOrderByIdController =async (req,res)=>{
+  try {
+    const orderById = await orderModel.findById(req.params.id)
+    if (!orderById) {
+      res.status(404).json({
+        success: false,
+        message: "Order not found",
+      });
+    } else {
+      res.json(orderById);
+    }
+  } catch (error) {
+    console.log("Error in getting single order : ", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+    });
+  }
+
+}
 export const updateOrderController = async (req, res) => {
   try {
     const updateOrder = await orderModel.findByIdAndUpdate(
