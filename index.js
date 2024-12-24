@@ -20,6 +20,9 @@ const allowedOrigin = [
   "https://foodconnect-charity-backend.onrender.com",
   "http://foodconnect-charity-backend.onrender.com",
   "https://foodconnect-charity-backend.onrender.com/",
+  "https://food-connect-kgr.vercel.app/",
+  "https://food-connect-kgr.vercel.app",
+  "http://food-connect-kgr.vercel.app/",
   undefined
 ]
 
