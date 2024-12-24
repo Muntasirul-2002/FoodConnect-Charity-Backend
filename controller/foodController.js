@@ -233,7 +233,7 @@ export const removeCartItemController = async (req, res) => {
     const updateCart = user.cart.filter((item) => String(item._id) !== foodID);
     user.cart = updateCart;
     await user.save()
-    res.status(200).send({ cart: updateCart.cart });
+    res.status(200).send({ success: true, cart:updateCart });
   } catch (error) {
     console.log("Error in removing item from cart :", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
