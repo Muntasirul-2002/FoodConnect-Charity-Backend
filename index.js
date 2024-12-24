@@ -8,6 +8,7 @@ import { connectDB } from "./config/db.js";
 import authRouter from "./router/authRoute.js";
 import foodRouter from "./router/foodRoute.js";
 import hostelRoute from "./router/hostelRoute.js";
+import orderRoute from "./router/orderRoute.js";
 
 dotenv.config();
 const app = express();
@@ -59,6 +60,7 @@ app.get("/", (req, res) => {
 app.use('/api/v1/auth', authRouter)
 app.use('/api/v1/food', foodRouter)
 app.use('/api/v1/hostel', hostelRoute)
+app.use("/api/v1/order", orderRoute)
 app.use("/image", express.static(path.join(__dirname, "uploads")));
 
 connectDB().then(() => {
