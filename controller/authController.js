@@ -155,6 +155,8 @@ export const hostelSignupController = async (req, res) => {
   }
 };
 
+
+
 //login function
 export const loginController = async (req, res) => {
   try {
@@ -175,7 +177,6 @@ export const loginController = async (req, res) => {
       case "ngo":
         user = await ngoModel.findOne({ email }).select("+password");
         break;
-
       default:
         return res.status(400).send({ message: "Invalid role" });
     }
@@ -217,7 +218,7 @@ export const loginController = async (req, res) => {
 //view-all-hostel-users
 export const ViewAllHostelUsersController = async (req, res) => {
   try {
-    const viewAllHostelUsers = await HostelModel.find().select("-password")
+    const viewAllHostelUsers = await HostelModel.find().select("-password");
     res.status(200).send({
       success: true,
       message: "All Hostel Users",
@@ -235,7 +236,7 @@ export const ViewAllHostelUsersController = async (req, res) => {
 //get-all-hostels
 export const GetAllRestaurantsController = async (req, res) => {
   try {
-    const getAllRestaurant = await resModel.find().select("-password")
+    const getAllRestaurant = await resModel.find().select("-password");
     res.status(200).send({
       success: true,
       message: "All Restaurant fetched successfully",

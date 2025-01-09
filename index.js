@@ -38,6 +38,7 @@ const corsOptions = {
   credentials: true
 }
 
+
 // Get the directory name in ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -50,6 +51,7 @@ if (!fs.existsSync(uploadsDir)) {
 //setup middleware
 app.use(cors(corsOptions))
 app.use(express.json());
+
 
 //default router
 app.get("/", (req, res) => {

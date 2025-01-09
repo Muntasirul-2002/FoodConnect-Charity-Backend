@@ -26,18 +26,24 @@ export const requireSignIn = async (req, res, next) => {
 //hostel access
 export const isHostel = async (req, res, next) => {
   try {
+    console.log("Decoded User:", req.user); // Log decoded user info
     const user = await HostelModel.findById(req.user._id);
-    if (user.role === !"hostel") {
+    if (!user) {
+      return res.status(404).send({
+        success: false,
+        message: "Hostel user not found",
+      });
+    }
+    if (user.role !== "hostel") {
       return res.status(401).send({
         success: false,
-        message: "UnAuthorized Access",
+        message: "Unauthorized - Not a hostel user",
       });
-    } else {
-      next();
     }
+    next();
   } catch (error) {
-    console.log(error);
-    res.status(401).send({
+    console.error("Error in Hostel middleware:", error);
+    res.status(500).send({
       success: false,
       error,
       message: "Error in Hostel middleware",

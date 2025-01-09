@@ -2,19 +2,36 @@ import orderModel from "../models/orderModel.js";
 // import {sendSms} from '../utils/smsService.js'
 export const createOrderController = async (req, res) => {
   try {
-    const { foodItem, food_name, address, buyer } = req.body;
+    const { foodItem, food_name, address, buyer, sellerRole } = req.body;
     if (!foodItem || !food_name || !address || !buyer) {
       return res.status(400).json({
         success: false,
         message: "All Fields are required",
       });
     }
-    const newOrder = new orderModel({
+    const orderData = {
       foodItem,
       food_name,
       address,
       buyer,
-    });
+    }
+    if(sellerRole === "restaurant"){
+      orderData.seller_restaurant = req.body.seller_restaurant;
+    }else if(sellerRole === "hostel"){
+      orderData.seller_hostel = req.body.seller_hostel;
+    }else{
+      return res.status(400).json({
+        success: false,
+        message: "Invalid seller role",
+      })
+    }
+    // const newOrder = new orderModel({
+    //   foodItem,
+    //   food_name,
+    //   address,
+    //   buyer,
+    // });
+    const newOrder = new orderModel(orderData)
     await newOrder.save();
     res.status(200).json({
       success: true,
@@ -72,6 +89,14 @@ export const getSingleOrderController = async (req, res) => {
     });
   }
 };
+
+export const getOrderBySellerController = async (req,res)=> {
+  try {
+    
+  } catch (error) {
+    
+  }
+}
 
 export const getOrderByIdController =async (req,res)=>{
   try {
