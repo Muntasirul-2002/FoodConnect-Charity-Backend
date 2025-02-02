@@ -2,35 +2,40 @@ import orderModel from "../models/orderModel.js";
 // import {sendSms} from '../utils/smsService.js'
 export const createOrderController = async (req, res) => {
   try {
-    const { foodItem, food_name, address, buyer, sellerRole } = req.body;
+    const { foodItem, food_name, address, buyer, sellerRole, seller_restaurant, seller_hostel } = req.body;
     if (!foodItem || !food_name || !address || !buyer) {
       return res.status(400).json({
         success: false,
         message: "All Fields are required",
       });
     }
+
+    // if(sellerRole === "restaurant"){
+    //   orderData.seller_restaurant = req.body.seller_restaurant;
+    // }else if(sellerRole === "hostel"){
+    //   orderData.seller_hostel = req.body.seller_hostel;
+    // }else{
+    //   return res.status(400).json({
+    //     success: false,
+    //     message: "Invalid seller role",
+    //   })
+    // }
     const orderData = {
       foodItem,
       food_name,
       address,
       buyer,
-    }
-    if(sellerRole === "restaurant"){
-      orderData.seller_restaurant = req.body.seller_restaurant;
-    }else if(sellerRole === "hostel"){
-      orderData.seller_hostel = req.body.seller_hostel;
-    }else{
-      return res.status(400).json({
-        success: false,
-        message: "Invalid seller role",
-      })
-    }
+      sellerRole,
+      ...(sellerRole === "restaurant" && { seller_restaurant }),
+      ...(sellerRole === "hostel" && { seller_hostel }),
+    };
     // const newOrder = new orderModel({
     //   foodItem,
     //   food_name,
     //   address,
     //   buyer,
     // });
+
     const newOrder = new orderModel(orderData)
     await newOrder.save();
     res.status(200).json({
@@ -38,6 +43,7 @@ export const createOrderController = async (req, res) => {
       message: "Order has been created",
       order: newOrder,
     });
+
     // const message = `Thank you for your order, ${address.name} ! Here are your order details:
     
     // Food Item : ${food_name.join(',')}
@@ -48,7 +54,7 @@ export const createOrderController = async (req, res) => {
     // `
     // await sendSms(address.contact, message)
   } catch (error) {
-    console.log("Error in creating order : ", error);
+    console.log("Error in creating order: ", error);
     res.status(500).json({
       success: false,
       message: "Failed to create order",
