@@ -27,7 +27,7 @@ orderRouter.get("/get-orders/:sellerID", getOrderBySellerController);
 orderRouter.get("/get-order/:id", getOrderByIdController)
 
 //update order
-orderRouter.put("/update-order/:id", updateOrderController);
+orderRouter.put("/update-order-status/:id", updateOrderController);
 
 //cancel order
 orderRouter.post("/cancel-order/:id", cancelOrderController);
