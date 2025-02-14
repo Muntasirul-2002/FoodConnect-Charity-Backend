@@ -3,9 +3,8 @@ import {
   cancelOrderController,
   createOrderController,
   getAllOrdersController,
-  getOrderByIdController,
   getOrderBySellerController,
-  getSingleOrderController,
+  getOrdersByBuyerIdController,
   updateOrderController,
 } from "../controller/orderController.js";
 
@@ -18,13 +17,13 @@ orderRouter.post("/create-order", createOrderController);
 orderRouter.get("/get-orders", getAllOrdersController);
 
 //get order by id
-orderRouter.get("/get-orders/:userID", getSingleOrderController);
+orderRouter.get("/get-orders/:buyerId", getOrdersByBuyerIdController);
 
 //get orders by seller id
-orderRouter.get("/get-orders/:sellerID", getOrderBySellerController);
+orderRouter.get("/get-orders/:sellerId", getOrderBySellerController);
 
-//get order by id for update
-orderRouter.get("/get-order/:id", getOrderByIdController)
+// //get order by id for update
+// orderRouter.get("/get-order/:id", getOrderByIdController)
 
 //update order
 orderRouter.put("/update-order-status/:id", updateOrderController);

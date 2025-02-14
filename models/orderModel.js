@@ -26,14 +26,11 @@ const orderSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "NGO_users",
     },
-    seller_hostel : {
-      type : mongoose.Schema.Types.ObjectId,
-      ref : "hostel_users"
-    },
-    seller_restaurant :{
-      type : mongoose.Schema.Types.ObjectId,
-      ref :"restaurant_user"
-    },
+   sellerId:{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "hostel_users",
+    required: true,
+   },
     status: {
       type: String,
       default: "UnProcessed",
