@@ -48,8 +48,12 @@ export const createOrderController = async (req, res) => {
 
 export const getAllOrdersController = async (req, res) => {
   try {
-    const getAllOrders = await orderModel.find();
-    res.status(200).json(getAllOrders);
+    const orders = await orderModel.find();
+    res.status(200).json({
+      success: true,
+      message: "Orders fetched successfully",
+      orders,
+    });
   } catch (error) {
     console.log("Error in fetching orders : ", error);
     res.status(500).json({

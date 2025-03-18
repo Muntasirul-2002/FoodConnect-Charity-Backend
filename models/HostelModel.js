@@ -31,7 +31,7 @@ const hostelSchema = new mongoose.Schema({
     },
     role:{
         type:String,
-        default:"owner"
+        default:"hostel"
     }
 })
 

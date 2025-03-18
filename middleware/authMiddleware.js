@@ -2,14 +2,13 @@ import JWT from "jsonwebtoken";
 import HostelModel from "../models/HostelModel.js";
 import ngoModel from "../models/ngoModel.js";
 import resModel from "../models/resModel.js";
-
+import adminModel from "../models/adminModel.js";
 //Protected routes token base
 export const requireSignIn = async (req, res, next) => {
   const authHeader = req.headers.authorization;
   if (!authHeader) {
     return res.status(401).send({ success: false, message: "Token not provided" });
   }
-
   try {
     const token = authHeader.split(" ")[1];
     const decoded = JWT.verify(token, process.env.JWT_SECRET);
@@ -20,9 +19,6 @@ export const requireSignIn = async (req, res, next) => {
     res.status(401).send({ success: false, message: "Unauthorized - Invalid Token" });
   }
 };
-
-
-
 //hostel access
 export const isHostel = async (req, res, next) => {
   try {
@@ -50,7 +46,31 @@ export const isHostel = async (req, res, next) => {
     });
   }
 };
-
+export const isAdmin = async (req, res, next) => {
+  try {
+    const user = await adminModel.findById(req.user._id);
+    if (!user) {
+      return res.status(404).send({
+        success: false,
+        message: "Admin user not found",
+      });
+    }
+    if (user.role !== "admin") {
+      return res.status(401).send({
+        success: false,
+        message: "Unauthorized - Not a admin user",
+      });
+    }
+    next();
+  } catch (error) {
+    console.error("Error in admin middleware:", error);
+    res.status(500).send({
+      success: false,
+      error,
+      message: "Error in admin middleware",
+    });
+  }
+};
 //ngo access
 export const isNgo = async (req,res,next)=>{
   try {
@@ -73,7 +93,6 @@ export const isNgo = async (req,res,next)=>{
     })
   }
 }
-
 // restaurant access 
 export const isRestaurant = async(req,res,next)=> {
   try {

@@ -1,4 +1,5 @@
 import { comparePassword, hashPassword } from "../helper/authHelper.js";
+import adminModel from "../models/adminModel.js";
 import HostelModel from "../models/HostelModel.js";
 import ngoModel from "../models/ngoModel.js";
 import resModel from "../models/resModel.js";
@@ -16,7 +17,6 @@ export const ngoSignupController = async (req, res) => {
       !name ||
       !mobile ||
       !address ||
-      !memberId ||
       !role
     ) {
       return res.send({ message: "All fields are required" });
@@ -155,6 +155,28 @@ export const hostelSignupController = async (req, res) => {
   }
 };
 
+export const adminSignupController = async(req,res)=>{
+  try {
+    const {email,password} = req.body;
+    if(!email || !password){
+      return res.status(404).send({success : false, message: "All fields are required!!"})
+    }
+    const existingEmail = await adminModel.findOne({email:email})
+    if(existingEmail){
+      return res.status(400).send({success : false, message: "Email already exists"})
+    }
+    const hashedPassword = await hashPassword(password)
+    const adminUser = new adminModel({
+      email,
+      password:hashedPassword,
+    }).save()
+    return res.status(200).send({success: true, message: "Admin Registered", adminUser})
+  } catch (error) {
+    return res
+      .status(400)
+      .send({ success: false, message: "Something went wrong:", error });
+  }
+}
 
 
 //login function
@@ -168,6 +190,9 @@ export const loginController = async (req, res) => {
     }
     let user;
     switch (role) {
+      case "admin":
+        user = await adminModel.findOne({ email }).select("+password");
+        break;
       case "hostel":
         user = await HostelModel.findOne({ email }).select("+password");
         break;
@@ -250,3 +275,21 @@ export const GetAllRestaurantsController = async (req, res) => {
     });
   }
 };
+
+//get all admins
+export const GetAllAdminController = async(req,res)=>{
+  try {
+    const getAllAdmins = await adminModel.find();
+    res.status(200).send({
+      success: true,
+      message:"All admins fetched successfully",
+      getAllAdmins
+    })
+  } catch (error) {
+    console.log(error);
+    res.status(404).send({
+      success: false,
+      message: "Something went wrong in getting all admins",
+    });
+  }
+}
