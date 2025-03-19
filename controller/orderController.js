@@ -65,7 +65,7 @@ export const getAllOrdersController = async (req, res) => {
 
 export const getOrdersByBuyerIdController = async (req, res) => {
   try {
-    const orders = await orderModel.find({buyerId : req.params.buyer})
+    const orders = await orderModel.find({buyerId : req.params.buyerId})
     if (!orders.length) {
       return res.status(400).json({
         success: false,

@@ -17,7 +17,7 @@ orderRouter.post("/create-order", createOrderController);
 orderRouter.get("/get-orders", getAllOrdersController);
 
 //get order by id
-orderRouter.get("/get-orders/:buyerId", getOrdersByBuyerIdController);
+orderRouter.get("/get-buyer-orders/:buyerId", getOrdersByBuyerIdController);
 
 //get orders by seller id
 orderRouter.get("/get-orders/:sellerId", getOrderBySellerController);

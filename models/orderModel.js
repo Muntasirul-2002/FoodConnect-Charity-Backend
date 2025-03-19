@@ -22,7 +22,7 @@ const orderSchema = new mongoose.Schema(
       mapLink: { type: String },
     },
 
-    buyer: {
+    buyerId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "NGO_users",
     },
