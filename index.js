@@ -18,9 +18,10 @@ const port = 8080;
 const allowedOrigin = [
   "http://localhost:8080",
   "http://localhost:3000",
+  "https://foodconnect-charity-backend.onrender.com/",
+  "http://foodconnect-charity-backend.onrender.com/",
   "https://foodconnect-charity-backend.onrender.com",
   "http://foodconnect-charity-backend.onrender.com",
-  "https://foodconnect-charity-backend.onrender.com/",
   "https://food-connect-kgr.vercel.app/",
   "https://food-connect-kgr.vercel.app",
   "http://food-connect-kgr.vercel.app/",
