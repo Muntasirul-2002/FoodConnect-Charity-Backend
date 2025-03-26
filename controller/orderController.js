@@ -4,8 +4,8 @@ import orderModel from "../models/orderModel.js";
 export const createOrderController = async (req, res) => {
   try {
     console.log("Received Order Data :", req.body)
-    const { foodItem, food_name, address, buyer, sellerId } = req.body;
-    if (!foodItem || !food_name || !address || !buyer || !sellerId) {
+    const { foodItem, food_name, address, buyerId, sellerId } = req.body;
+    if (!foodItem || !food_name || !address || !buyerId || !sellerId) {
       return res.status(400).json({
         success: false,
         message: "All Fields are required",
@@ -16,7 +16,7 @@ export const createOrderController = async (req, res) => {
       foodItem,
       food_name,
       address,
-      buyer,
+      buyerId,
       sellerId,
     };
     const newOrder = new orderModel(orderData)
